@@ -5,13 +5,15 @@ import pygame
 
 if __name__ == "__main__":
     
-    pygame.init()
+    pygame.init()    
     screen = pygame.display.set_mode((800, 800))
     clock = pygame.time.Clock()
     running = True
     board = GameBoard()
+    print(board.state)
     bg = board.createBoard()
-    king = board.setupBoard()
+    figures = board.setupBoard()
+    print(board.state)
     while running:
 
         for event in pygame.event.get():
@@ -20,7 +22,7 @@ if __name__ == "__main__":
         
         screen.blit(bg, bg.get_rect())
         
-        screen.blit(king, (80*5,80))
+        on_board_figures = [screen.blit(fig, (pos[0]*80,pos[1]*80)) for fig, pos in figures]
 
         pygame.display.flip()    
         
