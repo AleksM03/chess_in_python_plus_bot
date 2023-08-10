@@ -21,8 +21,7 @@ class Figure:
         return (image, self.position) 
         
         
-    def move(self, new_pos):
-        self.position = new_pos
+    #Implement check_legal_move() for all
 
 class Pawn(Figure):
 
