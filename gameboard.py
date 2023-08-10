@@ -19,28 +19,24 @@ class GameBoard:
     
     def setupBoard(self):
         rows = {val+1:let for val,let in enumerate("abcdefgh")}
-        # Work in progress 
-        # For now only load king image into game 
-        # later create proper state array and return it and use it to record the state of the board and keep track of game
-        # pictures also work in progress
         
-        blacks = [Rook("black", (1,1)), Knight("black", (2,1)), Bishop("black", (3,1)), Queen("black", (4,1)), King("black", (5,1)), Bishop("black", (6,1)), Knight("black", (7,1)), Rook("black", (8,1))]
+        blacks = [Rook("black", (1,8)), Knight("black", (2,8)), Bishop("black", (3,8)), Queen("black", (4,8)), King("black", (5,8)), Bishop("black", (6,8)), Knight("black", (7,8)), Rook("black", (8,8))]
         
-        blacks.extend([Pawn("black", (x, 2)) for x in range(1, 9)])
+        blacks.extend([Pawn("black", (x, 7)) for x in range(1, 9)])
 
         for i in blacks:
-            ident = i.name + rows[i.position[1]] + str(i.position[0])
+            ident = i.name + rows[i.position[0]] + str(i.position[1])
             self.state[ident] = i
 
         blacks = [fig.draw() for fig in blacks]
 
-        whites = [Rook("white", (1,8)), Knight("white", (2,8)), Bishop("white", (3,8)), Queen("white", (4,8)), King("white", (5,8)), Bishop("white", (6,8)), Knight("white", (7,8)), Rook("white", (8,8))]
+        whites = [Rook("white", (1,1)), Knight("white", (2,1)), Bishop("white", (3,1)), Queen("white", (4,1)), King("white", (5,1)), Bishop("white", (6,1)), Knight("white", (7,1)), Rook("white", (8,1))]
 
 
-        whites.extend([Pawn("white", (x, 7)) for x in range(1, 9)])
+        whites.extend([Pawn("white", (x, 2)) for x in range(1, 9)])
 
         for i in whites:
-            ident = i.name + rows[i.position[1]] + str(i.position[0])
+            ident = i.name + rows[i.position[0]] + str(i.position[1])
             self.state[ident] = i
 
         whites = [fig.draw() for fig in whites]

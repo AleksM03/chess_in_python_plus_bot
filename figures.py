@@ -19,6 +19,10 @@ class Figure:
         del img_px_arr
        
         return (image, self.position) 
+        
+        
+    def move(self, new_pos):
+        self.position = new_pos
 
 class Pawn(Figure):
 

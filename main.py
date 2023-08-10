@@ -10,19 +10,27 @@ if __name__ == "__main__":
     clock = pygame.time.Clock()
     running = True
     board = GameBoard()
-    print(board.state)
     bg = board.createBoard()
     figures = board.setupBoard()
-    print(board.state)
+    draw_pos = [(x,y) for x in range(80, 641, 80) for y in  range(80, 641, 80)]
+    board_pos = [(x,y) for x in range(1, 9) for y in range(8, 0, -1)]
+    draw_translate = {pos:draw_p for pos, draw_p in zip(board_pos, draw_pos)}
+
     while running:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                new_pos = pygame.mouse.get_pos()
+                print(new_pos)
+
         
         screen.blit(bg, bg.get_rect())
         
-        on_board_figures = [screen.blit(fig, (pos[0]*80,pos[1]*80)) for fig, pos in figures]
+        #print(board.state)
+
+        on_board_figures = [screen.blit(fig, draw_translate[pos]) for fig, pos in figures]
 
         pygame.display.flip()    
         
