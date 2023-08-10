@@ -18,7 +18,7 @@ class Figure:
         img_px_arr.replace((0,0,0), self.get_color())
         del img_px_arr
        
-        return (image, self.position) 
+        return [image, self.position] 
         
         
     #Implement check_legal_move() for all
