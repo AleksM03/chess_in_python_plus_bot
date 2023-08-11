@@ -33,12 +33,18 @@ class Pawn(Figure):
 
     def vision(self):
         x, y = self.position
-        flanks = [(x+1, y+1), (x-1, y+1)]
-        if self.move_num == 0:
-            return flanks + [(x, y+i) for i in range(1,3)]
+        if self.color == "white":
+            flanks = [(x+1, y+1), (x-1, y+1)]
+            if self.move_num == 0:
+                return flanks + [(x, y+i) for i in range(1,3)]
+            else:
+                return flanks + (x, y+1)
         else:
-            return flanks + (x, y+1)
-
+            flanks = [(x+1, y-1), (x-1, y-1)]
+            if self.move_num == 0:
+                return flanks + [(x, y-i) for i in range(1,3)]
+            else:
+                return flanks + (x, y-1)
 """
     def passantable(self, firstMove=lambda x: True if x == 1 else False, doubleMove, enemyAdjecent):
         return firstMove and doubleMove and enemeyAdjecent

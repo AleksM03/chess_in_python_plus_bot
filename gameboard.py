@@ -41,11 +41,15 @@ class GameBoard:
             self.state[ident] = i
 
         whites = [fig.draw() for fig in whites]
-       
+        
+        self.updatePositions()
+        
+        return blacks + whites
+   
+    def updatePositions(self):
         self.positions = {pos.position:ident for ident, pos in self.state.items()}
 
-        return blacks + whites
-    
+
     def getLegalMove(self, figure):
         return [viz for viz in figure.vision() if viz not in self.positions.keys() and 0 not in viz and 9 not in viz]
 
