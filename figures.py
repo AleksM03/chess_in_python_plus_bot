@@ -21,15 +21,23 @@ class Figure:
         return [image, self.position] 
         
         
-    #Implement check_legal_move() for all
+    def vision(self):
+        pass
 
 class Pawn(Figure):
 
-    def __init__(self, color, position, move_num=0):
+    def __init__(self, color, position):
         super().__init__(color, position)
-        self.move_num = move_num
+        self.move_num = 0
         self.name = __class__.__name__.lower()
 
+    def vision(self):
+        x, y = self.position
+        flanks = [(x+1, y+1), (x-1, y+1)]
+        if self.move_num == 0:
+            return flanks + [(x, y+i) for i in range(1,3)]
+        else:
+            return flanks + (x, y+1)
 
 """
     def passantable(self, firstMove=lambda x: True if x == 1 else False, doubleMove, enemyAdjecent):
@@ -42,12 +50,24 @@ class King(Figure):
         self.in_check = in_check
         self.name = __class__.__name__.lower()
 
+    def vision(self):
+        x, y = self.position
+        return [(x+ox,y+oy) for ox in range(-1, 2) for oy in range(-1, 2) if (x+ox, y+oy) != self.position]
+
 
 class Queen(Figure):
 
     def __init__(self, color, position):
         super().__init__(color, position)
         self.name = __class__.__name__.lower()
+
+    def vision(self):
+        x, y = self.position
+        viz = [(x+ox,y+oy) for ox in range(-1, 2) for oy in range(-1, 2) if (x+ox, y+oy) != self.position]
+        viz += [(x+o, y+o)  for o in range(1, 8) if x+o <= 8 and x+o >= 1 and y+o >= 1 and y+o <= 8 and (x+o,y+o) not in viz]
+        viz += [(x-o, y-o)  for o in range(1, 8) if x-o <= 8 and x-o >= 1 and y-o >= 1 and y-o <= 8 and (x-o,y-o) not in viz]
+        return viz
+
 
 
 class Knight(Figure):
@@ -67,3 +87,11 @@ class Rook(Figure):
     def __init__(self, color, position):
         super().__init__(color, position)
         self.name = __class__.__name__.lower()
+
+if __name__ == "__main__":
+    pawn = Pawn((0,0,0), (5,7))
+    king = King((0,0,0), (5,5))
+    queen = Queen((0,0,0), (4,4))
+    print(pawn.vision())
+    print(king.vision())
+    print(queen.vision())

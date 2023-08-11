@@ -3,7 +3,8 @@ from figures import *
 
 class GameBoard:
     def __init__(self):
-        self.state = {}
+        self.state = dict()
+        self.positions = dict()
 
     def createBoard(self):
         cellSize = 80
@@ -40,23 +41,35 @@ class GameBoard:
             self.state[ident] = i
 
         whites = [fig.draw() for fig in whites]
-        
+       
+        self.positions = {pos.position:ident for ident, pos in self.state.items()}
+
         return blacks + whites
+    
+    def getLegalMove(self, figure):
+        return [viz for viz in figure.vision() if viz not in self.positions.keys() and 0 not in viz and 9 not in viz]
 
 if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((800, 800))
     clock = pygame.time.Clock()
     running = True
-    board = GameBoard().createBoard()
-    
+    board = GameBoard()
+    bg = board.createBoard()
+    figures = board.setupBoard()
+    print(board.positions)
     while running:
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
-        screen.blit(board, board.get_rect())
+        screen.blit(bg, bg.get_rect())
+        
+        with open("help.txt", "w") as file:
+
+            for i in figures:
+                file.write(str(i))
 
         pygame.display.flip()
 
