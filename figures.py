@@ -6,6 +6,7 @@ class Figure:
         self.color = color
         self.position = position
         self.name = __class__.__name__.lower()
+        self.ident = ""
 
     def get_color(self):
         return (255,255,255) if self.color == "white" else (0,0,0)
@@ -18,8 +19,12 @@ class Figure:
         img_px_arr.replace((0,0,0), self.get_color())
         del img_px_arr
        
-        return [image, self.position] 
-        
+        return image 
+
+    
+    def draw_highlight(self, board, move_disp):
+        for pos in board.get_legal_move(self.ident):
+            pygame.draw.rect(move_disp, (255, 255, 0, 80), (board.draw_translate[pos][0]*80, board.draw_translate[pos][1]*80, 80, 80))
         
     def vision(self):
         pass
@@ -93,6 +98,11 @@ class Rook(Figure):
     def __init__(self, color, position):
         super().__init__(color, position)
         self.name = __class__.__name__.lower()
+
+
+"""
+Testing Only
+"""
 
 if __name__ == "__main__":
     pawn = Pawn((0,0,0), (5,7))
