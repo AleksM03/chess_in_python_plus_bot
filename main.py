@@ -3,7 +3,7 @@ import pygame
         
 
 if __name__ == "__main__":
-    # Pygame Setup 
+    # Pygame Setup
     pygame.init()    
     screen = pygame.display.set_mode((800, 800))
     move_disp = pygame.Surface((800, 800), pygame.SRCALPHA, 32)
@@ -13,6 +13,9 @@ if __name__ == "__main__":
 
     # Game Setup
     turn = 0
+    old_pos = None
+    curr_pos = None
+    select = None
     board = GameBoard()
     bg = board.create_board()
     drag = False
@@ -34,11 +37,15 @@ if __name__ == "__main__":
                         if rct.collidepoint(event.pos) and "white" in chose:
                             drag = True
                             select = chose
+                            if old_pos == None:
+                                old_pos = board.positions[select]
                             board.state[chose].draw_highlight(board, move_disp)
                     else:
                          if rct.collidepoint(event.pos) and "black" in chose:
                             drag = True
                             select = chose
+                            if old_pos == None:
+                                old_pos = board.positions[select]
                             board.state[chose].draw_highlight(board, move_disp)
 
 
@@ -46,21 +53,31 @@ if __name__ == "__main__":
             if event.type == pygame.MOUSEBUTTONUP and drag:
                 drag = False
                 move_disp.fill((0,0,0,0))
+                board.positions[select] = old_pos
+
+                if curr_pos in board.state[select].vision(board) and curr_pos != old_pos:
+                    board.positions[select] = curr_pos
 
                 fig_rects_updt = {ident:board.drawn_figs[ident].get_rect().move((board.draw_translate[pos][0]*80, board.draw_translate[pos][1]*80)) 
                                   for ident, pos in board.positions.items()}
                 
                 if fig_rects != fig_rects_updt:
                     fig_rects = fig_rects_updt
-                    board.state[select].position = board.positions[select]
-                    select = None
+                    board.state[select].position = curr_pos
+                    board.state[select].move_num += 1
                     turn += 1
+
+                select = None
+                curr_pos = None
+                old_pos = None
+
 
 
             # Allows you to drag the figures
             if event.type == pygame.MOUSEMOTION and drag:
                 try: 
-                    board.positions[select] = board.draw_translate[(event.pos[0]//80, event.pos[1]//80)]
+                    curr_pos = board.draw_translate[(event.pos[0]//80, event.pos[1]//80)]
+                    board.positions[select] = curr_pos
                 except (KeyError, TypeError):
                     pass
 

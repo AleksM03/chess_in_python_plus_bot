@@ -54,10 +54,6 @@ class GameBoard:
         self.positions = {ident:fig.position for ident, fig in self.state.items()}
 
 
-    def get_legal_move(self, ident):
-        return [viz for viz in self.state[ident].vision()]
-
-
 """
 Testing Only
 """
