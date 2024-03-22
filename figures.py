@@ -1,5 +1,50 @@
 import pygame
 
+"""
+What the Pieces see (Visions):
+
+X* = Piece can move there 
+P* = Piece
+oP = other Piece
+XoP = Takes other Piece
+<X> = Piece can continue in that direction until it hits a border or gets obstructed by oP
+
+Pawn:   
+        XfMoPa = Takes First Move other Pawn 
+
+        |X(XoP)|XXXX|X(XoP)|  
+        |......|X(P)|XXXXXX|  
+        |......|PPPP|XfMoPa|  
+
+King:
+        |X(XoP)|X(XoP)|X(XoP)|
+        |X(XoP)|PPPPPP|X(XoP)|
+        |X(XoP)|X(XoP)|X(XoP)|
+
+Rook:
+        |.......|<X>(XoP)|.......|
+        <X>(XoP)|PPPPPPPP|<X>(XoP)
+        |.......|<X>(XoP)|.......|
+
+Bishop:
+        <X>(XoP)|........|<X>(XoP)
+        |.......|PPPPPPPP|.......|
+        <X>(XoP)|........|<X>(XoP)
+
+Queen:
+        <X>(XoP)|<X>(XoP)|<X>(XoP)
+        <X>(XoP)|PPPPPPPP|<X>(XoP)
+        <X>(XoP)|<X>(XoP)|<X>(XoP)
+
+Knight:
+        |X(XoP)|.|X(XoP)|
+        |......|.|......|
+        |......|P|......|
+    
+        in every direction
+"""
+
+
 class Figure:
 
     def __init__(self, color, position):
@@ -29,6 +74,37 @@ class Figure:
         
     def vision(self, board):
         pass
+
+    def check_obstruction(self, viz, board):
+        temp = list()
+        own_color = [board.positions[ofig] for ofig in board.state if self.color in ofig]
+        other_color = [board.positions[ofig] for ofig in board.state if self.color not in ofig]
+
+        for pos in viz:
+            #Check if we are on the board
+            if pos in board.draw_translate.keys():
+                #Check if we get obstructed by another figure
+                if pos in own_color:
+                    break
+                elif pos in other_color:
+                    temp.append(pos)
+                    break
+                temp.append(pos)
+        return temp
+
+    def rook_vision(self, x, y, viz, board):
+        viz += self.check_obstruction([(x, y+o) for o in range(1, 8) if y+o <= 8 and (x,y+o) not in viz], board)
+        viz += self.check_obstruction([(x, y-o) for o in range(1, 8) if y-o >= 1 and (x,y-o) not in viz], board)
+        viz += self.check_obstruction([(x-o, y) for o in range(1, 8) if x-o >= 1 and (x-o,y) not in viz], board)
+        viz += self.check_obstruction([(x+o, y) for o in range(1, 8) if x+o <= 8 and (x+o,y) not in viz], board)
+        return viz
+    
+    def bishop_vision(self, x, y, viz, board):
+        viz += self.check_obstruction([(x+o, y+o) for o in range(1, 8) if x+o <= 8 and y+o <= 8 and (x+o,y+o) not in viz], board)
+        viz += self.check_obstruction([(x-o, y-o) for o in range(1, 8) if x-o >= 1 and y-o >= 1 and (x-o,y-o) not in viz], board)
+        viz += self.check_obstruction([(x+o, y-o) for o in range(1, 8) if x+o <= 8 and y-o >= 1 and (x+o,y-o) not in viz], board)
+        viz += self.check_obstruction([(x-o, y+o) for o in range(1, 8) if x-o >= 1 and y+o <= 8 and (x-o,y+o) not in viz], board)
+        return viz
 
 class Pawn(Figure):
 
@@ -69,8 +145,8 @@ class King(Figure):
 
     def vision(self, board):
         x, y = self.position
-        return [pos for pos in [(x+ox,y+oy) for ox in range(-1, 2) for oy in range(-1, 2) if (x+ox, y+oy) != self.position] 
-                if pos in board.draw_translate.keys() and pos not in [board.positions[ofig] for ofig in board.state if self.color in ofig]]
+        viz = [(x+ox,y+oy) for ox in range(-1, 2) for oy in range(-1, 2) if (x+ox, y+oy) != self.position]
+        return [pos for pos in viz if pos in board.draw_translate.keys() and pos not in [board.positions[ofig] for ofig in board.state if self.color in ofig]]
 
 
 class Queen(Figure):
@@ -82,17 +158,17 @@ class Queen(Figure):
 
     def vision(self, board):
         x, y = self.position
-        viz = [(x+ox,y+oy) for ox in range(-1, 2) for oy in range(-1, 2) if (x+ox, y+oy) != self.position]
-        viz += [(x+o, y+o)  for o in range(1, 8) if x+o <= 8 and y+o <= 8 and (x+o,y+o) not in viz]
-        viz += [(x-o, y-o)  for o in range(1, 8) if x-o >= 1 and y-o >= 1 and (x-o,y-o) not in viz]
-        viz += [(x+o, y-o)  for o in range(1, 8) if x+o <= 8 and y-o >= 1 and (x+o,y-o) not in viz]
-        viz += [(x-o, y+o)  for o in range(1, 8) if x-o >= 1 and y+o <= 8 and (x-o,y+o) not in viz]
-        viz += [(x, y+o)  for o in range(1, 8) if y+o <= 8 and (x,y+o) not in viz]
-        viz += [(x, y-o)  for o in range(1, 8) if y-o >= 1 and (x,y-o) not in viz]
-        viz += [(x-o, y)  for o in range(1, 8) if x-o >= 1 and (x-o,y) not in viz]
-        viz += [(x+o, y)  for o in range(1, 8) if x+o <= 8 and (x+o,y) not in viz]
 
-        return [pos for pos in viz if pos in board.draw_translate.keys() and pos not in [board.positions[ofig] for ofig in board.state if self.color in ofig]]
+        # King Vision
+        viz = self.check_obstruction([(x+ox,y+oy) for ox in range(-1, 2) for oy in range(-1, 2) if (x+ox, y+oy) != self.position], board)
+        
+        # Bishop Vision
+        viz += self.bishop_vision(x, y, viz, board)
+        
+        # Rook Vision   
+        viz += self.rook_vision(x, y, viz, board)
+
+        return viz
 
 
 class Knight(Figure):
@@ -102,18 +178,40 @@ class Knight(Figure):
         self.name = __class__.__name__.lower()
         self.value = 3
 
+    def vision(self, board):
+        x, y = self.position
+        viz = [(x+ox,y+oy) for oy in [-2, 2] for ox in [-1, 1]]
+        viz += [(x+ox,y+oy) for ox in [-2, 2] for oy in [-1, 1]]
+        return self.check_obstruction(viz, board)
+    
+
 class Bishop(Figure):
     
     def __init__(self, color, position):
         super().__init__(color, position)
         self.name = __class__.__name__.lower()
         self.value = 3
+
+    def vision(self, board):
+        x, y = self.position
+        viz = list()
+        viz = self.bishop_vision(x, y, viz, board)
+        return viz
+
+
+
 class Rook(Figure):
     
     def __init__(self, color, position):
         super().__init__(color, position)
         self.name = __class__.__name__.lower()
         self.value = 5
+    
+    def vision(self, board):
+        x, y = self.position
+        viz = list()
+        viz = self.rook_vision(x, y, viz, board)
+        return viz
 
 """
 Testing Only

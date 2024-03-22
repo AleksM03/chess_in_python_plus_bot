@@ -25,11 +25,13 @@ if __name__ == "__main__":
     while running:        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-
+                
+                # Uncomment for testing
+                """
                 with open("game_state.txt", "w", encoding="utf-8") as game_state:
                     for ident, position in board.positions.items():
                         game_state.write(f"{ident}: {position}\n")
-                
+                """
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for chose, rct in fig_rects.items():
