@@ -9,4 +9,4 @@ dependencies:
   - openssl
   - git
   - pygame
-prefix: F:\Miniconda\envs\chess
+
