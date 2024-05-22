@@ -217,18 +217,3 @@ class Rook(Figure):
         viz = list()
         viz = self.rook_vision(x, y, viz, board)
         return viz
-
-"""
-Testing Only
-"""
-
-if __name__ == "__main__":
-    from gameboard import GameBoard
-    board = GameBoard()
-    boardbg = board.create_board()
-    print(board.state["knightwhite2"].vision(board))
-    for i in board.state["knightwhite2"].vision(board):
-        old = board.state["knightwhite2"].position
-        board.state["knightwhite2"].position = i
-        print(board.state["knightwhite2"].vision(board))
-        board.state["knightwhite2"].position = old

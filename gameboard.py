@@ -57,33 +57,3 @@ class GameBoard:
         del self.state[ident]
         self.update_positions()
 
-
-"""
-Testing Only
-"""
-
-if __name__ == "__main__":
-    pygame.init()
-    screen = pygame.display.set_mode((800, 800))
-    clock = pygame.time.Clock()
-    running = True
-    board = GameBoard()
-    bg = board.create_board()
-    print(board.positions)
-    while running:
-        
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-        screen.blit(bg, bg.get_rect())
-        
-        with open("help.txt", "w") as file:
-
-            for i in board.state.items():
-                file.write(str(i))
-
-        pygame.display.flip()
-
-        clock.tick(60)
-    pygame.quit()
