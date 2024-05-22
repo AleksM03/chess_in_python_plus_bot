@@ -85,7 +85,7 @@ class Figure:
             if pos in board.draw_translate.keys():
                 #Check if we get obstructed by another figure
                 if pos in own_color:
-                    continue
+                    break
                 temp.append(pos)
 
         return temp
@@ -163,10 +163,9 @@ class Queen(Figure):
 
     def vision(self, board):
         x, y = self.position
-
-        # King Vision
-        viz = self.check_obstruction([(x+ox,y+oy) for ox in range(-1, 2) for oy in range(-1, 2) if (x+ox, y+oy) != self.position], board)
         
+        viz = []
+
         # Bishop Vision
         viz += self.bishop_vision(x, y, viz, board)
         
@@ -187,7 +186,7 @@ class Knight(Figure):
         x, y = self.position
         viz = [(x+ox,y+oy) for oy in [-2, 2] for ox in [-1, 1]]
         viz += [(x+ox,y+oy) for ox in [-2, 2] for oy in [-1, 1]]
-        return self.check_obstruction(viz, board)
+        return [field for field in viz if field in board.draw_translate.keys() and field not in [board.positions[ofig] for ofig in board.state if self.color in ofig]]
     
 
 class Bishop(Figure):
