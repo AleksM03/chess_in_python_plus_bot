@@ -50,6 +50,13 @@ if __name__ == "__main__":
                                 old_pos = board.positions[select]
                             board.state[chose].draw_highlight(board, move_disp)
 
+            # Allows you to drag the figures
+            if event.type == pygame.MOUSEMOTION and drag:
+                try: 
+                    curr_pos = board.draw_translate[(event.pos[0]//80, event.pos[1]//80)]
+                    board.positions[select] = curr_pos
+                except (KeyError, TypeError):
+                    pass
 
             # Changes the position of the figure after being draged            
             if event.type == pygame.MOUSEBUTTONUP and drag:
@@ -66,22 +73,16 @@ if __name__ == "__main__":
                 if fig_rects != fig_rects_updt:
                     fig_rects = fig_rects_updt
                     board.state[select].position = curr_pos
+                    if board.state[select].take_piece(board):
+                        for ident, pos in board.positions.items():
+                            if pos == curr_pos and select != ident:
+                                board.remove_figure(ident)
                     board.state[select].move_num += 1
                     turn += 1
 
                 select = None
                 curr_pos = None
                 old_pos = None
-
-
-
-            # Allows you to drag the figures
-            if event.type == pygame.MOUSEMOTION and drag:
-                try: 
-                    curr_pos = board.draw_translate[(event.pos[0]//80, event.pos[1]//80)]
-                    board.positions[select] = curr_pos
-                except (KeyError, TypeError):
-                    pass
 
         
         screen.blit(bg, bg.get_rect())

@@ -91,6 +91,13 @@ class Figure:
                     break
                 temp.append(pos)
         return temp
+    
+    def take_piece(self, board):
+        other_c = [board.positions[ofig] for ofig in board.state if self.color not in ofig]
+        if self.position in other_c:
+            return True
+        else:
+            return False
 
     def rook_vision(self, x, y, viz, board):
         viz += self.check_obstruction([(x, y+o) for o in range(1, 8) if y+o <= 8 and (x,y+o) not in viz], board)

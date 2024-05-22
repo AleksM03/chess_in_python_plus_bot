@@ -53,6 +53,10 @@ class GameBoard:
     def update_positions(self):
         self.positions = {ident:fig.position for ident, fig in self.state.items()}
 
+    def remove_figure(self, ident):
+        del self.state[ident]
+        self.update_positions()
+
 
 """
 Testing Only
