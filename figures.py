@@ -85,11 +85,9 @@ class Figure:
             if pos in board.draw_translate.keys():
                 #Check if we get obstructed by another figure
                 if pos in own_color:
-                    break
-                elif pos in other_color:
-                    temp.append(pos)
-                    break
+                    continue
                 temp.append(pos)
+
         return temp
     
     def take_piece(self, board):
@@ -228,9 +226,9 @@ if __name__ == "__main__":
     from gameboard import GameBoard
     board = GameBoard()
     boardbg = board.create_board()
-    pawn = Pawn("black", (5,7))
-    king = King("black", (5,5))
-    queen = Queen("black", (4,4))
-    print(pawn.vision(board))
-    print(king.vision(board))
-    print(queen.vision(board))
+    print(board.state["knightwhite2"].vision(board))
+    for i in board.state["knightwhite2"].vision(board):
+        old = board.state["knightwhite2"].position
+        board.state["knightwhite2"].position = i
+        print(board.state["knightwhite2"].vision(board))
+        board.state["knightwhite2"].position = old
